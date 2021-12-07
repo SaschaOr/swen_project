@@ -6,7 +6,8 @@ namespace MonsterTradingCardGame
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Stack newStack = new Stack();
+            newStack.buyPackage(10);
         }
     }
 }

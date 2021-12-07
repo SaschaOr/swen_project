@@ -10,6 +10,8 @@ namespace MonsterTradingCardGame
 {
     class User
     {
+        private const string USERNAME = "test";
+        private const string PASSWORD = "test";
         private const int _coinStartingValue = 20;
         private const int _priceOfPackage = 5;
 
@@ -25,6 +27,9 @@ namespace MonsterTradingCardGame
             _password = password;
         }
 
-        
+        public bool login(string username, string password)
+        {
+            return (username.Equals(USERNAME) && password.Equals(PASSWORD));
+        }
     }
 }
