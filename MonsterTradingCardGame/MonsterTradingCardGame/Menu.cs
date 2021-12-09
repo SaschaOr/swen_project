@@ -8,10 +8,11 @@ namespace MonsterTradingCardGame
 {
     public class Menu
     {
-        private const int MENU_OPTIONS = 4;
+        private const int MENU_OPTIONS = 5;
 
         Stack cardManagement = new Stack();
         Battle battleArena = new Battle();
+        UserManagement userManagement = new UserManagement();
         User user1 = new User("Sascha", "test123");
         User user2 = new User("Jakob", "test123");
         
@@ -42,9 +43,10 @@ namespace MonsterTradingCardGame
             Console.WriteLine("----------------------------------------------------------");
             Console.WriteLine("Please select one of the following commands:");
             Console.WriteLine("1: LOGIN");
-            Console.WriteLine("2: BATTLE");
-            Console.WriteLine("3: BUY PACKAGE");
-            Console.WriteLine("4: QUIT");
+            Console.WriteLine("2: REGISTER");
+            Console.WriteLine("3: BATTLE");
+            Console.WriteLine("4: BUY PACKAGE");
+            Console.WriteLine("5: QUIT");
             Console.WriteLine("----------------------------------------------------------");
             Console.Write("Your choice: ");
         }
@@ -83,13 +85,18 @@ namespace MonsterTradingCardGame
                         case 1:
                             break;
                         case 2:
-                            battleArena.fight(user1, user2);
+                            User newUser = userManagement.getNewUser();
+                            bool status = userManagement.registerUser(newUser._username, newUser._password, newUser._elo);
+                            if (!status) Console.WriteLine("Something went wrong while registering your user! Please try again!");
                             break;
                         case 3:
+                            battleArena.fight(user1, user2);
+                            break;
+                        case 4:
                             cardManagement.buyPackage(user1);
                             cardManagement.buyPackage(user2);
                             break;
-                        case 4:
+                        case 5:
                             Console.WriteLine("The programm will be stopped! Thanks for playing!");
                             return false;
                         default:

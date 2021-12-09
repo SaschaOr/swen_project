@@ -13,14 +13,16 @@ namespace MonsterTradingCardGame
     {
         private const string USERNAME = "test";
         private const string PASSWORD = "test";
-        private const int _coinStartingValue = 20;
+        private const int COINS_INITIAL = 20;
+        private const int ELO_INITIAL = 100;
 
         public List<Card> _stack = new List<Card>();
 
         public int _userID { get; set; }
         public string _username { get; set; }
         public string _password { get; set; }
-        public int _coins { get; set; } = _coinStartingValue;
+        public int _coins { get; set; } = COINS_INITIAL;
+        public int _elo { get; set; } = ELO_INITIAL;
 
         public User(string username, string password)
         {
