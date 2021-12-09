@@ -9,13 +9,15 @@ namespace MonsterTradingCardGame
 {
 	public class Card
 	{
+		public int _id { get; }
 		public int _damage { get; }
 		public ElementType _elementType { get; set; }
 		public CardType _cardType { get; set; }
         public string _name { get; set; }
 
-		public Card(int damage, ElementType element, CardType card, string name)
+		public Card(int id, int damage, ElementType element, CardType card, string name)
 		{
+			_id = id;
 			_damage = damage;
 			_elementType = element;
 			_cardType = card;

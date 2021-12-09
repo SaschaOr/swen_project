@@ -14,74 +14,81 @@ namespace MonsterTradingCardGame
 
         public void fight(User user1, User user2)
         {
-            // check if players have enough cards in their stack
-            if (user1._stack.Count < DECK_SIZE || user2._stack.Count < DECK_SIZE)
+            if (user1 != null && user2 != null)
             {
-                Console.WriteLine($"PLAYER {((user1._stack.Count < DECK_SIZE) ? 1 : 2)} has not enough cards in the stack to form a deck!");
-                return;
+                // check if players have enough cards in their stack
+                if (user1._stack.Count < DECK_SIZE || user2._stack.Count < DECK_SIZE)
+                {
+                    Console.WriteLine($"PLAYER {((user1._stack.Count < DECK_SIZE) ? 1 : 2)} has not enough cards in the stack to form a deck!");
+                    return;
+                }
+
+                // create decks = 4 best cards of each user
+                List<Card> deckUser1 = getDeck(user1);
+                List<Card> deckUser2 = getDeck(user2);
+
+                printCards(deckUser1);
+                Console.WriteLine("---------------------------");
+                printCards(deckUser2);
+
+                int roundCounter = 0;
+
+                while (roundCounter < MAX_ROUNDS)
+                {
+                    Console.WriteLine($"Round {roundCounter + 1} starts!");
+                    Console.WriteLine("----------------------------------------------------------");
+
+                    // draw one card from each deck
+                    Random random = new Random();
+
+                    int randomCardUser1 = random.Next(deckUser1.Count - 1);
+                    int randomCardUser2 = random.Next(deckUser2.Count - 1);
+
+                    Card cardUser1 = deckUser1[randomCardUser1];
+                    Card cardUser2 = deckUser2[randomCardUser2];
+
+                    // calculate damage based on the card damage, type and element
+                    int calculatedDamageUser1 = calculateDamage(cardUser1, cardUser2);
+                    int calculatedDamageUser2 = calculateDamage(cardUser2, cardUser1);
+
+                    Console.WriteLine($"Card 1:\n    Element: {cardUser1._elementType}\n    Type: {cardUser1._cardType}\n    Damage: {cardUser1._damage}\n    Name: {cardUser1._name}\n    New Damage: {calculatedDamageUser1}\n");
+                    Console.WriteLine($"Card 2:\n    Element: {cardUser2._elementType}\n    Type: {cardUser2._cardType}\n    Damage: {cardUser2._damage}\n    Name: {cardUser2._name}\n    New Damage: {calculatedDamageUser2}\n");
+
+                    // higher damage wins and gets the opponents card
+                    if (calculatedDamageUser1 > calculatedDamageUser2)
+                    {
+                        Console.WriteLine("PLAYER 1 won this round");
+                        transferCardFromDeckToDeck(deckUser1, deckUser2, cardUser2);
+                    }
+                    else if (calculatedDamageUser2 > calculatedDamageUser1)
+                    {
+                        Console.WriteLine("PLAYER 2 won this round");
+                        transferCardFromDeckToDeck(deckUser2, deckUser1, cardUser1);
+                    }
+                    else
+                    {
+                        Console.WriteLine("DRAW, nothing happens this round");
+                    }
+
+                    if (deckUser1.Count <= 0 || deckUser2.Count <= 0)
+                    {
+                        Console.WriteLine("==========================================================");
+                        Console.WriteLine($"PLAYER {((deckUser1.Count <= 0) ? 2 : 1)} won this battle!\nCongrats!");
+                        Console.WriteLine("==========================================================");
+                        break;
+                    }
+
+                    //printCards(deckUser1);
+                    //Console.WriteLine("---------------------------");
+                    //printCards(deckUser2);
+
+                    Console.WriteLine("----------------------------------------------------------");
+                    roundCounter++;
+                }
             }
-
-            // create decks = 4 best cards of each user
-            List<Card> deckUser1 = getDeck(user1);
-            List<Card> deckUser2 = getDeck(user2);
-
-            printCards(deckUser1);
-            Console.WriteLine("---------------------------");
-            printCards(deckUser2);
-
-            int roundCounter = 0;
-
-            while (roundCounter < MAX_ROUNDS)
+            else
             {
-                Console.WriteLine($"Round {roundCounter + 1} starts!");
-                Console.WriteLine("----------------------------------------------------------");
-
-                // draw one card from each deck
-                Random random = new Random();
-
-                int randomCardUser1 = random.Next(deckUser1.Count - 1);
-                int randomCardUser2 = random.Next(deckUser2.Count - 1);
-
-                Card cardUser1 = deckUser1[randomCardUser1];
-                Card cardUser2 = deckUser2[randomCardUser2];
-
-                // calculate damage based on the card damage, type and element
-                int calculatedDamageUser1 = calculateDamage(cardUser1, cardUser2);
-                int calculatedDamageUser2 = calculateDamage(cardUser2, cardUser1);
-
-                Console.WriteLine($"Card 1:\n    Element: {cardUser1._elementType}\n    Type: {cardUser1._cardType}\n    Damage: {cardUser1._damage}\n    Name: {cardUser1._name}\n    New Damage: {calculatedDamageUser1}\n");
-                Console.WriteLine($"Card 2:\n    Element: {cardUser2._elementType}\n    Type: {cardUser2._cardType}\n    Damage: {cardUser2._damage}\n    Name: {cardUser2._name}\n    New Damage: {calculatedDamageUser2}\n");
-
-                // higher damage wins and gets the opponents card
-                if (calculatedDamageUser1 > calculatedDamageUser2)
-                {
-                    Console.WriteLine("PLAYER 1 won this round");
-                    transferCardFromDeckToDeck(deckUser1, deckUser2, cardUser2);
-                }
-                else if (calculatedDamageUser2 > calculatedDamageUser1)
-                {
-                    Console.WriteLine("PLAYER 2 won this round");
-                    transferCardFromDeckToDeck(deckUser2, deckUser1, cardUser1);
-                }
-                else
-                {
-                    Console.WriteLine("DRAW, nothing happens this round");
-                }
-
-                if (deckUser1.Count <= 0 || deckUser2.Count <= 0)
-                {
-                    Console.WriteLine("==========================================================");
-                    Console.WriteLine($"PLAYER {((deckUser1.Count <= 0) ? 2 : 1)} won this battle!\nCongrats!");
-                    Console.WriteLine("==========================================================");
-                    break;
-                }
-
-                //printCards(deckUser1);
-                //Console.WriteLine("---------------------------");
-                //printCards(deckUser2);
-
-                Console.WriteLine("----------------------------------------------------------");
-                roundCounter++;
+                Console.WriteLine("For taking a battle, you must login first!");
             }
 
         }

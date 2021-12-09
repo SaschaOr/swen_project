@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Npgsql;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace MonsterTradingCardGame
 {
@@ -32,18 +31,40 @@ namespace MonsterTradingCardGame
             // check if user exists in database
             NpgsqlConnection conn = database.openConnection();
 
-            NpgsqlCommand cmd = new NpgsqlCommand("SELECT 'password' FROM user WHERE 'name' = @name;", conn);
+            NpgsqlCommand cmd = new NpgsqlCommand("SELECT password FROM \"user\" WHERE name = @name;", conn);
             cmd.Parameters.AddWithValue("name", name);
             Object passwordResponse = cmd.ExecuteScalar();
+            
+            
 
-            // hashing users input
-            string hashedUserInput;
-
-            if(hashedUserInput.Equals((string)passwordResponse))
+            if (passwordResponse != null)
             {
-                User userObject = new User(name, password);
-                return userObject;
+                bool passwordCheck = true;
+
+                // https://stackoverflow.com/questions/4181198/how-to-hash-a-password
+                byte[] hashBytes = Convert.FromBase64String((string)passwordResponse);
+                byte[] salt = new byte[16];
+                Array.Copy(hashBytes, 0, salt, 0, 16);
+                var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000);
+                byte[] hash = pbkdf2.GetBytes(20);
+                // compare the results
+                for (int i = 0; i < 20; i++)
+                    if (hashBytes[i + 16] != hash[i])
+                        passwordCheck = false;
+
+                if (passwordCheck)
+                {
+                    cmd = new NpgsqlCommand("SELECT userid FROM \"user\" WHERE name = @name;", conn);
+                    cmd.Parameters.AddWithValue("name", name);
+                    Object useridResponse = cmd.ExecuteScalar();
+
+                    User userObject = new User((int)useridResponse, name, password);
+                    conn = database.closeConnection();
+                    Console.WriteLine($"Successfully logged in as: {name}");
+                    return userObject;
+                }
             }
+            conn = database.closeConnection();
             return null; 
         }
 
@@ -51,7 +72,7 @@ namespace MonsterTradingCardGame
         {
             NpgsqlConnection conn = database.openConnection();
 
-            NpgsqlCommand cmd = new NpgsqlCommand("SELECT 'userid' FROM user WHERE 'name' = @name;", conn);
+            NpgsqlCommand cmd = new NpgsqlCommand("SELECT userid FROM \"user\" WHERE name = @name;", conn);
             cmd.Parameters.AddWithValue("name", name);
             Object response = cmd.ExecuteScalar();
 
@@ -59,31 +80,24 @@ namespace MonsterTradingCardGame
             if (response == null)
             {
                 // create new user
-                NpgsqlCommand cmdNew = new NpgsqlCommand("INSERT INTO \"user\" (name, password, elo) VALUES (@name, @password, @elo);", conn);
-                cmdNew.Parameters.AddWithValue("name", name);
-                cmdNew.Parameters.AddWithValue("password", password);
-                cmdNew.Parameters.AddWithValue("elo", elo);
+                cmd = new NpgsqlCommand("INSERT INTO \"user\" (name, password, elo) VALUES (@name, @password, @elo);", conn);
 
-                //https://docs.microsoft.com/en-us/aspnet/core/security/data-protection/consumer-apis/password-hashing?view=aspnetcore-6.0
-                // generate a 128-bit salt using a cryptographically strong random sequence of nonzero values
-                byte[] salt = new byte[128 / 8];
-                using (var rngCsp = new RNGCryptoServiceProvider())
-                {
-                    rngCsp.GetNonZeroBytes(salt);
-                }
-                Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
+                // hashing users password with salt value
+                // https://stackoverflow.com/questions/4181198/how-to-hash-a-password
+                byte[] salt;
+                new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
+                var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000);
+                byte[] hash = pbkdf2.GetBytes(20);
+                byte[] hashBytes = new byte[36];
+                Array.Copy(salt, 0, hashBytes, 0, 16);
+                Array.Copy(hash, 0, hashBytes, 16, 20);
+                string passwordHash = Convert.ToBase64String(hashBytes);
 
-                // derive a 256-bit subkey (use HMACSHA256 with 100,000 iterations)
-                string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                    password: password,
-                    salt: salt,
-                    prf: KeyDerivationPrf.HMACSHA256,
-                    iterationCount: 100000,
-                    numBytesRequested: 256 / 8));
-                Console.WriteLine($"Hashed: {hashed}");
+                cmd.Parameters.AddWithValue("name", name);
+                cmd.Parameters.AddWithValue("password", passwordHash);
+                cmd.Parameters.AddWithValue("elo", elo);
 
-
-                Object responseNew = cmdNew.ExecuteScalar();
+                Object responseInsert = cmd.ExecuteScalar();
 
                 // check if insert is not correct
             }

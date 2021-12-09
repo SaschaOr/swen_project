@@ -24,8 +24,16 @@ namespace MonsterTradingCardGame
         public int _coins { get; set; } = COINS_INITIAL;
         public int _elo { get; set; } = ELO_INITIAL;
 
+        // bot
         public User(string username, string password)
         {
+            _username = username;
+            _password = password;
+        }
+
+        public User(int userID, string username, string password)
+        {
+            _userID = userID;
             _username = username;
             _password = password;
         }

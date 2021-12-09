@@ -13,8 +13,9 @@ namespace MonsterTradingCardGame
         Stack cardManagement = new Stack();
         Battle battleArena = new Battle();
         UserManagement userManagement = new UserManagement();
-        User user1 = new User("Sascha", "test123");
-        User user2 = new User("Jakob", "test123");
+        //User user1 = new User("Sascha", "test123");
+        User user1;
+        User user2 = new User("Bot", "test123");
         
         public void startMainMenu()
         {
@@ -25,9 +26,9 @@ namespace MonsterTradingCardGame
 
                 finished = processUserInput();
 
-                user1.printCards();
-                Console.WriteLine("---------------------------");
-                user2.printCards();
+                //user1.printCards();
+                //Console.WriteLine("---------------------------");
+                //user2.printCards();
 
                 if (finished)
                 {
@@ -83,6 +84,9 @@ namespace MonsterTradingCardGame
                     switch(userInput)
                     {
                         case 1:
+                            user1 = userManagement.loginUser();
+
+                            if(user1 == null) Console.WriteLine("Something went wrong! Please check your credentials!");
                             break;
                         case 2:
                             User newUser = userManagement.getNewUser();
