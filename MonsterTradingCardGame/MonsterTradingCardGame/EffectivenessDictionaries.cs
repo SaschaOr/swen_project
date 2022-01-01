@@ -8,6 +8,22 @@ namespace MonsterTradingCardGame
 {
     public class EffectivenessDictionaries
     {
-        private Dictionary<string, string> spellEffectiveness = new Dictionary<string, string>();
+        private Dictionary<string, string> _spellEffectiveness = new Dictionary<string, string>();
+        private Dictionary<string, string> _specialTypeEffectiveness = new Dictionary<string, string>();
+
+        public void loadDictionaries()
+        {
+
+        }
+
+        private void loadSpellEffectiveness()
+        {
+
+        }
+
+        private void loadSpecialTypeEffectiveness()
+        {
+
+        }
     }
 }
