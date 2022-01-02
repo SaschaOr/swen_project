@@ -54,7 +54,7 @@ namespace MonsterTradingCardGame
 
                 if (passwordCheck)
                 {
-                    cmd = new NpgsqlCommand("SELECT userid FROM \"user\" WHERE name = @name;", conn);
+                    cmd = new NpgsqlCommand("SELECT user_id FROM \"user\" WHERE name = @name;", conn);
                     cmd.Parameters.AddWithValue("name", name);
                     Object useridResponse = cmd.ExecuteScalar();
 
@@ -68,11 +68,11 @@ namespace MonsterTradingCardGame
             return null; 
         }
 
-        public bool registerUser(string name, string password, int elo)
+        public bool registerUser(string name, string password, int coins, int elo)
         {
             NpgsqlConnection conn = database.openConnection();
 
-            NpgsqlCommand cmd = new NpgsqlCommand("SELECT userid FROM \"user\" WHERE name = @name;", conn);
+            NpgsqlCommand cmd = new NpgsqlCommand("SELECT user_id FROM \"user\" WHERE name = @name;", conn);
             cmd.Parameters.AddWithValue("name", name);
             Object response = cmd.ExecuteScalar();
 
@@ -80,7 +80,7 @@ namespace MonsterTradingCardGame
             if (response == null)
             {
                 // create new user
-                cmd = new NpgsqlCommand("INSERT INTO \"user\" (name, password, elo) VALUES (@name, @password, @elo);", conn);
+                cmd = new NpgsqlCommand("INSERT INTO \"user\" (name, password, coins, elo) VALUES (@name, @password, @coins, @elo);", conn);
 
                 // hashing users password with salt value
                 // https://stackoverflow.com/questions/4181198/how-to-hash-a-password
@@ -95,6 +95,7 @@ namespace MonsterTradingCardGame
 
                 cmd.Parameters.AddWithValue("name", name);
                 cmd.Parameters.AddWithValue("password", passwordHash);
+                cmd.Parameters.AddWithValue("coins", coins);
                 cmd.Parameters.AddWithValue("elo", elo);
 
                 Object responseInsert = cmd.ExecuteScalar();

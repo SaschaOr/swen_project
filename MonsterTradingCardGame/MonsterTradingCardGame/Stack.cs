@@ -57,11 +57,11 @@ namespace MonsterTradingCardGame
             Database database = new Database();
             NpgsqlConnection conn = database.openConnection();
 
-            NpgsqlCommand cmd = new NpgsqlCommand("INSERT INTO \"card\" (cardtype, elementtype, damage, userid) VALUES (@cardtype, @elementtype, @damage, @userid);", conn);
-            cmd.Parameters.AddWithValue("cardtype", card._cardType.ToString());
-            cmd.Parameters.AddWithValue("elementtype", card._elementType.ToString());
+            NpgsqlCommand cmd = new NpgsqlCommand("INSERT INTO \"card\" (card_type, element_type, damage, user_id) VALUES (@card_type, @element_type, @damage, @user_id);", conn);
+            cmd.Parameters.AddWithValue("card_type", card._cardType.ToString());
+            cmd.Parameters.AddWithValue("element_type", card._elementType.ToString());
             cmd.Parameters.AddWithValue("damage", card._damage);
-            cmd.Parameters.AddWithValue("userid", userObject._userID);
+            cmd.Parameters.AddWithValue("user_id", userObject._userID);
 
             Object response = cmd.ExecuteScalar();
 

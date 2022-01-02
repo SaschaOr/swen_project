@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace MonsterTradingCardGame
 {
-    public enum CardType
+    public enum ElementType
     {
-        monster,
-        spell
+        Fire,
+        Water,
+        Normal
     }
 }

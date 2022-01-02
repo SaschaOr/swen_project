@@ -90,7 +90,7 @@ namespace MonsterTradingCardGame
                             break;
                         case 2:
                             User newUser = userManagement.getNewUser();
-                            bool status = userManagement.registerUser(newUser._username, newUser._password, newUser._elo);
+                            bool status = userManagement.registerUser(newUser._username, newUser._password, newUser._coins, newUser._elo);
                             if (!status) Console.WriteLine("Something went wrong while registering your user! Please try again!");
                             break;
                         case 3:

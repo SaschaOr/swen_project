@@ -11,8 +11,6 @@ namespace MonsterTradingCardGame
 {
     public class User
     {
-        private const string USERNAME = "test";
-        private const string PASSWORD = "test";
         private const int COINS_INITIAL = 20;
         private const int ELO_INITIAL = 100;
 
@@ -36,11 +34,6 @@ namespace MonsterTradingCardGame
             _userID = userID;
             _username = username;
             _password = password;
-        }
-
-        public bool login(string username, string password)
-        {
-            return (username.Equals(USERNAME) && password.Equals(PASSWORD));
         }
 
         public void addCardToStack(Card card)

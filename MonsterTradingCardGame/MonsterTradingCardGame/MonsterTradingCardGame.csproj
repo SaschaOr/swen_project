@@ -9,4 +9,8 @@
     <PackageReference Include="Npgsql" Version="6.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Card\" />
+  </ItemGroup>
+
 </Project>

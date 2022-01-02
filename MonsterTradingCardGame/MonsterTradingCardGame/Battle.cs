@@ -116,23 +116,23 @@ namespace MonsterTradingCardGame
             int damage = playerCard._damage;
 
             // pure monster fight -> damage does not change
-            if (playerCard._cardType == CardType.monster && opponentCard._cardType == CardType.monster)
+            if (playerCard._cardType == CardType.Monster && opponentCard._cardType == CardType.Monster)
             {
                 return damage;
             }
 
-            if (playerCard._elementType == ElementType.water && opponentCard._elementType == ElementType.fire)
+            if (playerCard._elementType == ElementType.Water && opponentCard._elementType == ElementType.Fire)
             {
                 damage *= DOUBLE_CONSTANT;
             }
 
-            if (playerCard._elementType == ElementType.fire && opponentCard._elementType == ElementType.water)
+            if (playerCard._elementType == ElementType.Fire && opponentCard._elementType == ElementType.Water)
             {
                 damage /= DOUBLE_CONSTANT;
             }
 
             // both normal type -> pure damage comparison
-            if (playerCard._elementType == ElementType.normal && opponentCard._elementType == ElementType.normal)
+            if (playerCard._elementType == ElementType.Normal && opponentCard._elementType == ElementType.Normal)
             {
                 return damage;
             }

@@ -11,5 +11,5 @@ namespace MonsterTradingCardGame
         protected int _damage { get; }
         protected ElementType _elementType { get; set; }
         protected CardType _cardType { get; set; }
-}
+    }
 }
