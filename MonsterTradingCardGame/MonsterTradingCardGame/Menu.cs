@@ -106,7 +106,6 @@ namespace MonsterTradingCardGame
                             return false;
                         case 6:
                             EffectivenessDictionaries dictionaries = new EffectivenessDictionaries();
-                            dictionaries.loadDictionaries();
                             dictionaries.printDictionaries();
                             break;
                         default:

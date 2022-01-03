@@ -11,8 +11,12 @@ namespace MonsterTradingCardGame
         private const int DECK_SIZE = 4;
         private const int MAX_ROUNDS = 100;
         private const int DOUBLE_CONSTANT = 2;
+        private const int ELO_WIN = 3;
+        private const int ELO_LOSS = -5;
+        private UserManagement _userManagement = new UserManagement();
+        private EffectivenessDictionaries _dictionaries = new EffectivenessDictionaries();
 
-        public void fight(User user1, User user2)
+         public void fight(User user1, User user2)
         {
             if (user1 != null && user2 != null)
             {
@@ -75,12 +79,26 @@ namespace MonsterTradingCardGame
                         Console.WriteLine("==========================================================");
                         Console.WriteLine($"PLAYER {((deckUser1.Count <= 0) ? 2 : 1)} won this battle!\nCongrats!");
                         Console.WriteLine("==========================================================");
+
+                        // Player 2 won
+                        if (deckUser1.Count <= 0)
+                        {
+                            _userManagement.updateElo(user1, ELO_LOSS);
+                            _userManagement.updateElo(user2, ELO_WIN);
+                        }
+                        // Player 1 won
+                        else
+                        {
+                            _userManagement.updateElo(user2, ELO_LOSS);
+                            _userManagement.updateElo(user1, ELO_WIN);
+                        }
+
                         break;
                     }
 
-                    //printCards(deckUser1);
-                    //Console.WriteLine("---------------------------");
-                    //printCards(deckUser2);
+                    printCards(deckUser1);
+                    Console.WriteLine("---------------------------");
+                    printCards(deckUser2);
 
                     Console.WriteLine("----------------------------------------------------------");
                     roundCounter++;
@@ -121,6 +139,27 @@ namespace MonsterTradingCardGame
                 return damage;
             }
 
+            // both normal type -> pure damage comparison
+            if (playerCard._elementType == ElementType.Normal && opponentCard._elementType == ElementType.Normal)
+            {
+                return damage;
+            }
+
+            // special type fights
+
+
+            // increase or reduce damage based on the effectiveness list
+            if (_dictionaries.spellEffectiveness[playerCard._elementType.ToString()].Equals(opponentCard._elementType.ToString()))
+            {
+                damage *= DOUBLE_CONSTANT;
+            }
+
+            if (_dictionaries.spellEffectiveness[opponentCard._elementType.ToString()].Equals(playerCard._elementType.ToString()))
+            {
+                damage /= DOUBLE_CONSTANT;
+            }
+
+            /*
             if (playerCard._elementType == ElementType.Water && opponentCard._elementType == ElementType.Fire)
             {
                 damage *= DOUBLE_CONSTANT;
@@ -130,12 +169,9 @@ namespace MonsterTradingCardGame
             {
                 damage /= DOUBLE_CONSTANT;
             }
+            */
 
-            // both normal type -> pure damage comparison
-            if (playerCard._elementType == ElementType.Normal && opponentCard._elementType == ElementType.Normal)
-            {
-                return damage;
-            }
+
 
             return damage;
         }

@@ -15,6 +15,7 @@ namespace MonsterTradingCardGame
         Knight,
         Kraken,
         Elf,
-        Troll
+        Troll,
+        Spell = -1
     }
 }

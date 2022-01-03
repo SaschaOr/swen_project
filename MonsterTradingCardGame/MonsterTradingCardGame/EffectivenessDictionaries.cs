@@ -9,11 +9,11 @@ namespace MonsterTradingCardGame
 {
     public class EffectivenessDictionaries
     {
-        private Dictionary<string, string> _spellEffectiveness = new Dictionary<string, string>();
-        private Dictionary<string, string> _specialTypeEffectiveness = new Dictionary<string, string>();
+        public Dictionary<string, string> spellEffectiveness = new Dictionary<string, string>();
+        public Dictionary<string, string> specialTypeEffectiveness = new Dictionary<string, string>();
         Database database = new Database();
 
-        public void loadDictionaries()
+        public EffectivenessDictionaries()
         {
             loadSpellEffectiveness();
             loadSpecialTypeEffectiveness();
@@ -28,7 +28,7 @@ namespace MonsterTradingCardGame
 
             while (dr.Read())
             {
-                _spellEffectiveness.Add((string)dr[0], (string)dr[1]);
+                spellEffectiveness.Add((string)dr[0], (string)dr[1]);
             }
 
             conn = database.closeConnection();
@@ -43,7 +43,7 @@ namespace MonsterTradingCardGame
 
             while (dr.Read())
             {
-                _specialTypeEffectiveness.Add((string)dr[0], (string)dr[1]);
+                specialTypeEffectiveness.Add((string)dr[0], (string)dr[1]);
             }
 
             conn = database.closeConnection();
@@ -51,14 +51,14 @@ namespace MonsterTradingCardGame
 
         public void printDictionaries()
         {
-            foreach (KeyValuePair<string, string> kvp in _spellEffectiveness)
+            foreach (KeyValuePair<string, string> kvp in spellEffectiveness)
             {
                 Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
             }
 
             Console.WriteLine("---------------------------------------------");
 
-            foreach (KeyValuePair<string, string> kvp in _specialTypeEffectiveness)
+            foreach (KeyValuePair<string, string> kvp in specialTypeEffectiveness)
             {
                 Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
             }

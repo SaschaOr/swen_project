@@ -12,6 +12,7 @@ namespace MonsterTradingCardGame
         private const int PRICE_OF_PACKAGE = 5;
         private const int CARDS_PER_NEW_PACKAGE = 5;
         private const int MAX_DAMAGE = 100;
+        private UserManagement _userManagement = new UserManagement();
 
         public void buyPackage(User userObject)
         {
@@ -33,7 +34,9 @@ namespace MonsterTradingCardGame
                     Random random = new Random();
                     int randomCardType = random.Next(cardTypeCount);
                     int randomElementType = random.Next(elementTypeCount);
-                    int randomMonsterType = random.Next(monsterTypeCount);
+                    // subtract 1, because spell can't be a monster type
+                    Console.WriteLine($"LENGTH: {monsterTypeCount}");
+                    int randomMonsterType = random.Next(monsterTypeCount - 1);
                     int damage = random.Next(MAX_DAMAGE);
 
                     string cardName;
@@ -48,17 +51,17 @@ namespace MonsterTradingCardGame
                     else
                     {
                         ElementType tmpElement = (ElementType)randomElementType;
+                        randomMonsterType = -1;
                         cardName = tmpElement.ToString() + " Spell";
                     }
 
                     // card has no ID -> after insert statement
-                    Card tmpCard = new Card(cardName, damage, (ElementType)randomElementType, (CardType)randomCardType);
+                    Card tmpCard = new Card(cardName, damage, (ElementType)randomElementType, (CardType)randomCardType, (MonsterType)randomMonsterType);
                     //Console.WriteLine($"The new crafted card {newCard._name} is of type {newCard._cardType} and has the element {newCard._elementType} with a damage of {newCard._damage}");
 
                     if (!userObject._username.Equals("Bot"))
                     {
-                        Card newCard;
-                        newCard = saveCard(tmpCard, userObject);
+                        Card newCard = saveCard(tmpCard, userObject);
                         userObject.addCardToStack(newCard);
                     }
                     else
@@ -67,7 +70,8 @@ namespace MonsterTradingCardGame
                     }
                 }
 
-                userObject._coins -= PRICE_OF_PACKAGE;
+                _userManagement.updateCoins(userObject, PRICE_OF_PACKAGE);
+                _userManagement.updateCoins(userObject, -PRICE_OF_PACKAGE);
                 Console.WriteLine("Successfully bought a card package!");
             }
             else
@@ -81,10 +85,11 @@ namespace MonsterTradingCardGame
             Database database = new Database();
             NpgsqlConnection conn = database.openConnection();
 
-            NpgsqlCommand cmd = new NpgsqlCommand("INSERT INTO \"card\" (card_name, card_type, element_type, damage, user_id) VALUES (@card_name, @card_type, @element_type, @damage, @user_id) RETURNING card_id;", conn);
+            NpgsqlCommand cmd = new NpgsqlCommand("INSERT INTO \"card\" (card_name, card_type, element_type, special_type, damage, user_id) VALUES (@card_name, @card_type, @element_type, @special_type, @damage, @user_id) RETURNING card_id;", conn);
             cmd.Parameters.AddWithValue("card_name", card._cardName.ToString());
             cmd.Parameters.AddWithValue("card_type", card._cardType.ToString());
             cmd.Parameters.AddWithValue("element_type", card._elementType.ToString());
+            cmd.Parameters.AddWithValue("special_type", card._specialType.ToString());
             cmd.Parameters.AddWithValue("damage", card._damage);
             cmd.Parameters.AddWithValue("user_id", userObject._userID);
 
@@ -97,7 +102,7 @@ namespace MonsterTradingCardGame
 
             conn = database.closeConnection();
 
-            return new Card((int) response, card._cardName, card._damage, card._elementType, card._cardType);
+            return new Card((int) response, card._cardName, card._damage, card._elementType, card._cardType, card._specialType);
         }
     }
 }

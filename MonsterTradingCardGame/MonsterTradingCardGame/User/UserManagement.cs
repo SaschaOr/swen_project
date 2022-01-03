@@ -66,7 +66,8 @@ namespace MonsterTradingCardGame
                     }
 
                     conn = database.closeConnection();
-                    Console.WriteLine($"Successfully logged in as: {name}");
+                    Console.WriteLine($"Successfully logged in as: {userObject._username}");
+                    Console.WriteLine($"TESTDATEN: {userObject._userID} - {userObject._username} - {userObject._password} - {userObject._coins} - {userObject._elo}");
                     return userObject;
                 }
             }
@@ -113,9 +114,10 @@ namespace MonsterTradingCardGame
             return true;
         }
 
-        public void updateElo(User user)
+        public void updateElo(User user, int eloChange)
         {
             NpgsqlConnection conn = database.openConnection();
+            user._elo += eloChange;
 
             NpgsqlCommand cmd = new NpgsqlCommand("UPDATE \"user\" SET elo = @elo WHERE user_id = @user_id", conn);
             cmd.Parameters.AddWithValue("elo", user._elo);
@@ -125,9 +127,10 @@ namespace MonsterTradingCardGame
             conn = database.closeConnection();
         }
 
-        public void updateCoins(User user)
+        public void updateCoins(User user, int coinChange)
         {
             NpgsqlConnection conn = database.openConnection();
+            user._coins += coinChange;
 
             NpgsqlCommand cmd = new NpgsqlCommand("UPDATE \"user\" SET coins = @coins WHERE user_id = @user_id", conn);
             cmd.Parameters.AddWithValue("coins", user._coins);
