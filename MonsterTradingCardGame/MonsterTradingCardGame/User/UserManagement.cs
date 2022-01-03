@@ -54,11 +54,17 @@ namespace MonsterTradingCardGame
 
                 if (passwordCheck)
                 {
-                    cmd = new NpgsqlCommand("SELECT user_id FROM \"user\" WHERE name = @name;", conn);
+                    cmd = new NpgsqlCommand("SELECT * FROM \"user\" WHERE name = @name;", conn);
                     cmd.Parameters.AddWithValue("name", name);
-                    Object useridResponse = cmd.ExecuteScalar();
+                    NpgsqlDataReader dr = cmd.ExecuteReader();
 
-                    User userObject = new User((int)useridResponse, name, password);
+                    User userObject = null;
+
+                    while (dr.Read())
+                    {
+                        userObject = new User((int) dr[0], (string) dr[1], password, (int) dr[3], (int) dr[4]);
+                    }
+
                     conn = database.closeConnection();
                     Console.WriteLine($"Successfully logged in as: {name}");
                     return userObject;
@@ -105,6 +111,30 @@ namespace MonsterTradingCardGame
 
             conn = database.closeConnection();
             return true;
+        }
+
+        public void updateElo(User user)
+        {
+            NpgsqlConnection conn = database.openConnection();
+
+            NpgsqlCommand cmd = new NpgsqlCommand("UPDATE \"user\" SET elo = @elo WHERE user_id = @user_id", conn);
+            cmd.Parameters.AddWithValue("elo", user._elo);
+            cmd.Parameters.AddWithValue("user_id", user._userID);
+            cmd.ExecuteNonQuery();
+
+            conn = database.closeConnection();
+        }
+
+        public void updateCoins(User user)
+        {
+            NpgsqlConnection conn = database.openConnection();
+
+            NpgsqlCommand cmd = new NpgsqlCommand("UPDATE \"user\" SET coins = @coins WHERE user_id = @user_id", conn);
+            cmd.Parameters.AddWithValue("coins", user._coins);
+            cmd.Parameters.AddWithValue("user_id", user._userID);
+            cmd.ExecuteNonQuery();
+
+            conn = database.closeConnection();
         }
 
         // https://stackoverflow.com/questions/29201697/hide-replace-when-typing-a-password-c/29201791

@@ -8,7 +8,7 @@ namespace MonsterTradingCardGame
 {
     public class Menu
     {
-        private const int MENU_OPTIONS = 5;
+        private const int MENU_OPTIONS = 6;
 
         Stack cardManagement = new Stack();
         Battle battleArena = new Battle();
@@ -48,6 +48,7 @@ namespace MonsterTradingCardGame
             Console.WriteLine("3: BATTLE");
             Console.WriteLine("4: BUY PACKAGE");
             Console.WriteLine("5: QUIT");
+            Console.WriteLine("6: TESTING");
             Console.WriteLine("----------------------------------------------------------");
             Console.Write("Your choice: ");
         }
@@ -103,6 +104,11 @@ namespace MonsterTradingCardGame
                         case 5:
                             Console.WriteLine("The programm will be stopped! Thanks for playing!");
                             return false;
+                        case 6:
+                            EffectivenessDictionaries dictionaries = new EffectivenessDictionaries();
+                            dictionaries.loadDictionaries();
+                            dictionaries.printDictionaries();
+                            break;
                         default:
                             Console.WriteLine("An error occured!");
                             return false;

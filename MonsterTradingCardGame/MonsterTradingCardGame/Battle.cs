@@ -51,8 +51,8 @@ namespace MonsterTradingCardGame
                     int calculatedDamageUser1 = calculateDamage(cardUser1, cardUser2);
                     int calculatedDamageUser2 = calculateDamage(cardUser2, cardUser1);
 
-                    Console.WriteLine($"Card 1:\n    Element: {cardUser1._elementType}\n    Type: {cardUser1._cardType}\n    Damage: {cardUser1._damage}\n    Name: {cardUser1._name}\n    New Damage: {calculatedDamageUser1}\n");
-                    Console.WriteLine($"Card 2:\n    Element: {cardUser2._elementType}\n    Type: {cardUser2._cardType}\n    Damage: {cardUser2._damage}\n    Name: {cardUser2._name}\n    New Damage: {calculatedDamageUser2}\n");
+                    Console.WriteLine($"Card 1:\n    Name: {cardUser1._cardName}\n    Element: {cardUser1._elementType}\n    Type: {cardUser1._cardType}\n    Damage: {cardUser1._damage}\n    New Damage: {calculatedDamageUser1}\n");
+                    Console.WriteLine($"Card 2:\n    Name: {cardUser2._cardName}\n    Element: {cardUser2._elementType}\n    Type: {cardUser2._cardType}\n    Damage: {cardUser2._damage}\n    New Damage: {calculatedDamageUser2}\n");
 
                     // higher damage wins and gets the opponents card
                     if (calculatedDamageUser1 > calculatedDamageUser2)
@@ -144,7 +144,7 @@ namespace MonsterTradingCardGame
         {
             for (int i = 0; i < deckLoser.Count; i++)
             {
-                if (deckLoser[i]._name.Equals(cardToRemove._name))
+                if (deckLoser[i]._cardID.Equals(cardToRemove._cardID))
                 {
                     deckLoser.RemoveAt(i);
                     deckWinner.Add(cardToRemove);
@@ -156,7 +156,7 @@ namespace MonsterTradingCardGame
         {
             foreach (Card card in list)
             {
-                Console.WriteLine($"{card._name} is from type {card._cardType} and has element {card._elementType} with {card._damage} damage!");
+                Console.WriteLine($"{card._cardName} is from type {card._cardType} and has element {card._elementType} with {card._damage} damage!");
             }
         }
     }

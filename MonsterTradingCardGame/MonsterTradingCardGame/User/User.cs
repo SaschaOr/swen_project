@@ -29,11 +29,13 @@ namespace MonsterTradingCardGame
             _password = password;
         }
 
-        public User(int userID, string username, string password)
+        public User(int userID, string username, string password, int coins, int elo)
         {
             _userID = userID;
             _username = username;
             _password = password;
+            _coins = coins;
+            _elo = elo;
         }
 
         public void addCardToStack(Card card)
@@ -50,7 +52,7 @@ namespace MonsterTradingCardGame
         {
             foreach (Card card in _stack)
             {
-                Console.WriteLine($"{card._name} is from type {card._cardType} and has element {card._elementType} with {card._damage} damage!");
+                Console.WriteLine($"{card._cardName} is from type {card._cardType} and has element {card._elementType} with {card._damage} damage!");
             }
         }
     }
