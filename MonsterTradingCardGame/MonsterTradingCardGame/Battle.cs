@@ -11,6 +11,7 @@ namespace MonsterTradingCardGame
         private const int DECK_SIZE = 4;
         private const int MAX_ROUNDS = 100;
         private const int DOUBLE_CONSTANT = 2;
+        private const int NO_DAMAGE = 0;
         private const int ELO_WIN = 3;
         private const int ELO_LOSS = -5;
         private UserManagement _userManagement = new UserManagement();
@@ -96,9 +97,9 @@ namespace MonsterTradingCardGame
                         break;
                     }
 
-                    printCards(deckUser1);
-                    Console.WriteLine("---------------------------");
-                    printCards(deckUser2);
+                    //printCards(deckUser1);
+                    //Console.WriteLine("---------------------------");
+                    //printCards(deckUser2);
 
                     Console.WriteLine("----------------------------------------------------------");
                     roundCounter++;
@@ -133,6 +134,13 @@ namespace MonsterTradingCardGame
         {
             int damage = playerCard._damage;
 
+            // special type fights
+            if (checkSpecialType(playerCard, opponentCard))
+            {
+                Console.WriteLine($"SPECIAL FIGHT: {opponentCard._cardName} vs. {playerCard._cardName}");
+                return NO_DAMAGE;
+            }
+
             // pure monster fight -> damage does not change
             if (playerCard._cardType == CardType.Monster && opponentCard._cardType == CardType.Monster)
             {
@@ -145,9 +153,6 @@ namespace MonsterTradingCardGame
                 return damage;
             }
 
-            // special type fights
-
-
             // increase or reduce damage based on the effectiveness list
             if (_dictionaries.spellEffectiveness[playerCard._elementType.ToString()].Equals(opponentCard._elementType.ToString()))
             {
@@ -158,20 +163,6 @@ namespace MonsterTradingCardGame
             {
                 damage /= DOUBLE_CONSTANT;
             }
-
-            /*
-            if (playerCard._elementType == ElementType.Water && opponentCard._elementType == ElementType.Fire)
-            {
-                damage *= DOUBLE_CONSTANT;
-            }
-
-            if (playerCard._elementType == ElementType.Fire && opponentCard._elementType == ElementType.Water)
-            {
-                damage /= DOUBLE_CONSTANT;
-            }
-            */
-
-
 
             return damage;
         }
@@ -186,6 +177,59 @@ namespace MonsterTradingCardGame
                     deckWinner.Add(cardToRemove);
                 }
             }
+        }
+
+        private bool checkSpecialType(Card playerCard, Card opponentCard)
+        {
+            if (_dictionaries.specialTypeEffectiveness.ContainsKey(opponentCard._cardName))
+            {
+                //Console.WriteLine("Gegner hat Special Type im Kartennamen enthalten!");
+                
+                if (_dictionaries.specialTypeEffectiveness[opponentCard._cardName].Equals(playerCard._cardName))
+                {
+                    //Console.WriteLine("Spieler hat Special Type im Kartennamen enthalten!");
+                    return true;
+                }
+                if (_dictionaries.specialTypeEffectiveness[opponentCard._cardName].Equals(playerCard._specialType.ToString()))
+                {
+                    //Console.WriteLine("Spieler hat Special Type im Special Type enthalten!");
+                    return true;
+                }
+            }
+
+            if (_dictionaries.specialTypeEffectiveness.ContainsKey(opponentCard._specialType.ToString()))
+            {
+                //Console.WriteLine("Gegner hat Special Type im Special Type enthalten!");
+                if (_dictionaries.specialTypeEffectiveness[opponentCard._specialType.ToString()].Equals(playerCard._cardName))
+                {
+                    //Console.WriteLine("Spieler hat Special Type im Kartennamen enthalten!");
+                    return true;
+                }
+                if (_dictionaries.specialTypeEffectiveness[opponentCard._specialType.ToString()].Equals(playerCard._specialType.ToString()))
+                {
+                    //Console.WriteLine("Spieler hat Special Type im Special Type enthalten!");
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool checkSpecialTypeValue(Card cardToTest)
+        {
+            if (_dictionaries.specialTypeEffectiveness.ContainsKey(cardToTest._cardName))
+            {
+                Console.WriteLine("Ich bin im Kartennamen enthalten!");
+                return true;
+            }
+
+            if (_dictionaries.specialTypeEffectiveness.ContainsKey(cardToTest._specialType.ToString()))
+            {
+                Console.WriteLine("Ich bin im Special Type enthalten!");
+                return true;
+            }
+
+            return false;
         }
 
         public void printCards(List<Card> list)

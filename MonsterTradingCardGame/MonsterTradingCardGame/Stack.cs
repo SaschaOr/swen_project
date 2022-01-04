@@ -14,7 +14,7 @@ namespace MonsterTradingCardGame
         private const int MAX_DAMAGE = 100;
         private UserManagement _userManagement = new UserManagement();
 
-        public void buyPackage(User userObject)
+        /*public void buyPackage(User userObject)
         {
             if (userObject != null)
             {
@@ -77,6 +77,27 @@ namespace MonsterTradingCardGame
             else
             {
                 Console.WriteLine("Packages can only be acquired by logged in users!");
+            }
+        }*/
+
+        public void buyPackage(User userObject)
+        {
+            if (!userObject._username.Equals("Bot"))
+            {
+                userObject.addCardToStack(new Card(1, "Water Spell", 10, ElementType.Water, CardType.Spell, MonsterType.Spell));
+                userObject.addCardToStack(new Card(1, "Water Kraken", 10, ElementType.Water, CardType.Monster, MonsterType.Kraken));
+                userObject.addCardToStack(new Card(1, "Fire Elf", 10, ElementType.Fire, CardType.Monster, MonsterType.Elf));
+                userObject.addCardToStack(new Card(1, "Normal Goblin", 10, ElementType.Normal, CardType.Monster, MonsterType.Goblin));
+                userObject.addCardToStack(new Card(1, "Normal Ork", 10, ElementType.Normal, CardType.Monster, MonsterType.Ork));
+
+            }
+            else
+            {
+                userObject.addCardToStack(new Card(1, "Water Dragon", 10, ElementType.Water, CardType.Monster, MonsterType.Dragon));
+                userObject.addCardToStack(new Card(1, "Water Wizzard", 10, ElementType.Water, CardType.Monster, MonsterType.Wizzard));
+                userObject.addCardToStack(new Card(1, "Fire Knight", 10, ElementType.Fire, CardType.Monster, MonsterType.Knight));
+                userObject.addCardToStack(new Card(1, "Normal Spell", 10, ElementType.Normal, CardType.Spell, MonsterType.Spell));
+                userObject.addCardToStack(new Card(1, "Normal Dragon", 10, ElementType.Normal, CardType.Monster, MonsterType.Dragon));
             }
         }
 
