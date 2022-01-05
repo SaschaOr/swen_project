@@ -10,6 +10,9 @@ namespace MonsterTradingCardGame
 {
     public class UserManagement
     {
+        private const int COINS_INITIAL = 20;
+        private const int ELO_INITIAL = 100;
+
         Database database = new Database();
         public User getNewUser()
         {
@@ -17,7 +20,7 @@ namespace MonsterTradingCardGame
             string name = Console.ReadLine();
             Console.Write("Password: ");
             string password = readPassword();
-            User newUser = new User(name, password);
+            User newUser = new User(name, password, COINS_INITIAL, ELO_INITIAL);
             return newUser;
         }
 
@@ -75,12 +78,12 @@ namespace MonsterTradingCardGame
             return null; 
         }
 
-        public bool registerUser(string name, string password, int coins, int elo)
+        public bool registerUser(User newUser)
         {
             NpgsqlConnection conn = database.openConnection();
 
             NpgsqlCommand cmd = new NpgsqlCommand("SELECT user_id FROM \"user\" WHERE name = @name;", conn);
-            cmd.Parameters.AddWithValue("name", name);
+            cmd.Parameters.AddWithValue("name", newUser._username);
             Object response = cmd.ExecuteScalar();
 
             // user does not exist
@@ -93,17 +96,17 @@ namespace MonsterTradingCardGame
                 // https://stackoverflow.com/questions/4181198/how-to-hash-a-password
                 byte[] salt;
                 new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
-                var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000);
+                var pbkdf2 = new Rfc2898DeriveBytes(newUser._password, salt, 100000);
                 byte[] hash = pbkdf2.GetBytes(20);
                 byte[] hashBytes = new byte[36];
                 Array.Copy(salt, 0, hashBytes, 0, 16);
                 Array.Copy(hash, 0, hashBytes, 16, 20);
                 string passwordHash = Convert.ToBase64String(hashBytes);
 
-                cmd.Parameters.AddWithValue("name", name);
+                cmd.Parameters.AddWithValue("name", newUser._username);
                 cmd.Parameters.AddWithValue("password", passwordHash);
-                cmd.Parameters.AddWithValue("coins", coins);
-                cmd.Parameters.AddWithValue("elo", elo);
+                cmd.Parameters.AddWithValue("coins", newUser._coins);
+                cmd.Parameters.AddWithValue("elo", newUser._elo);
 
                 Object responseInsert = cmd.ExecuteScalar();
 
