@@ -114,7 +114,7 @@ namespace MonsterTradingCardGame
                                 _login = true;
                                 cardManagement.loadDeckOfUser(user1);
                                 cardManagement.loadStackOfUser(user1);
-                                user1.printCards();
+                                //user1.printCards();
                             }
                             break;
                         case 2:

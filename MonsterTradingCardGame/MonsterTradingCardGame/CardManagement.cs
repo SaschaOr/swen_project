@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Resources;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -214,11 +215,11 @@ namespace MonsterTradingCardGame
 
         public void setDeck(User user)
         {
-            bool finished = false;
+            //bool finished = false;
 
-            while (!finished)
-            {
-                Console.WriteLine("Your current deck:");
+            //while (!finished)
+            //{
+                Console.WriteLine("\nYour current deck:");
                 Console.WriteLine("==================");
 
                 for (int i = 0; i < DECK_SIZE; i++)
@@ -234,7 +235,7 @@ namespace MonsterTradingCardGame
                     }
                 }
 
-                Console.WriteLine("Your cards, which can be taken into the deck:");
+                Console.WriteLine("\nYour cards, which can be taken into the deck:");
                 Console.WriteLine("=============================================");
 
                 for (int i = 0; i < user._stack.Count; i++)
@@ -243,14 +244,20 @@ namespace MonsterTradingCardGame
                     Console.WriteLine($"{i + 1}. {currentCard._cardName} - Type: {currentCard._cardType.ToString()} - Element: {currentCard._elementType.ToString()} - Damage: {currentCard._damage}");
                 }
 
-                Console.WriteLine("To change cards, please state the position of the card in the deck and the stack");
+                Console.WriteLine("\nTo change cards, please state the position of the card in the deck and the stack (press 0 to leave the selection)");
                 Console.Write("Deck: ");
                 int deckPos = getUserInput(DECK_SIZE);
+                if (deckPos == 0)
+                    return;
+
                 Console.Write("Stack: ");
                 int stackPos = getUserInput(user._stack.Count);
+                if (stackPos == 0)
+                    return;
 
-                // swap function returning status of swap to end while loop
-            }
+                // subtract one at the positions, because of array index
+                swapCardsInDeckAndStack(user, deckPos - 1, stackPos - 1);
+            //}
         }
 
         private int getUserInput(int maxSize)
@@ -265,7 +272,7 @@ namespace MonsterTradingCardGame
                     string value = Console.ReadLine();
                     choice = Convert.ToInt32(value);
 
-                    if (choice > 0 && choice <= maxSize)
+                    if (choice >= 0 && choice <= maxSize)
                         acceptedValue = true;
                     else
                         Console.WriteLine("Your input is out of range! Try again.");
@@ -279,9 +286,57 @@ namespace MonsterTradingCardGame
             return choice;
         }
 
-        private void swapCardsInDeckAndStack()
+        private void swapCardsInDeckAndStack(User user, int deckPos, int stackPos)
         {
+            // deck is probably empty
+            Card deck = null;
+            Card stack = user._stack[stackPos];
 
+            // user can take a position, that is empty -> check size of deck
+            if (user._deck.Count > deckPos)
+            {
+                deck = user._deck[deckPos];
+            }
+            
+            // swap cards
+            user.removeCardFromStack(stack);
+            user.addCardToDeck(stack);
+
+            if (deck != null)
+            {
+                user.removeCardFromDeck(deck);
+                user.addCardToStack(deck);
+            }
+
+            changeDeckStatus(user, deck, stack);
+            Console.WriteLine("\nYour stack and deck has been updated!");
+        }
+
+        private void changeDeckStatus(User user, Card fromDeckToStack, Card fromStacktoDeck)
+        {
+            NpgsqlConnection conn = database.openConnection();
+            
+            // change card from stack to deck
+            NpgsqlCommand cmd = new NpgsqlCommand("UPDATE \"card\" SET in_deck = @in_deck WHERE user_id = @user_id AND card_id = @card_id;", conn);
+            cmd.Parameters.AddWithValue("user_id", user._userID);
+            cmd.Parameters.AddWithValue("card_id", fromStacktoDeck._cardID);
+            cmd.Parameters.AddWithValue("in_deck", true);
+
+            Object response = cmd.ExecuteNonQuery();
+
+            // deck can be empty
+            if (fromDeckToStack != null)
+            {
+                // change card from deck to stack
+                cmd = new NpgsqlCommand("UPDATE \"card\" SET in_deck = @in_deck WHERE user_id = @user_id AND card_id = @card_id;", conn);
+                cmd.Parameters.AddWithValue("user_id", user._userID);
+                cmd.Parameters.AddWithValue("card_id", fromDeckToStack._cardID);
+                cmd.Parameters.AddWithValue("in_deck", false);
+
+                response = cmd.ExecuteNonQuery();
+            }
+
+            conn = database.closeConnection();
         }
     }
 }
