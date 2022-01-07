@@ -21,11 +21,11 @@ namespace MonsterTradingCardGame
         public int _coins { get; set; }
         public int _elo { get; set; }
 
-        // bot
-        public User(string username, string password)
+        // enemy
+        public User(int userID, string username)
         {
+            _userID = userID;
             _username = username;
-            _password = password;
         }
 
         public User(int userID, string username, string password, int coins, int elo)

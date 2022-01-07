@@ -9,13 +9,15 @@ namespace MonsterTradingCardGame
     public class Menu
     {
         private const int MENU_OPTIONS_BEFORE_LOGIN = 3;
-        private const int MENU_OPTIONS_AFTER_LOGIN = 7;
+        private const int MENU_OPTIONS_AFTER_LOGIN = 12;
 
         CardManagement cardManagement = new CardManagement();
         Battle battleArena = new Battle();
         UserManagement userManagement = new UserManagement();
-        User user1;
-        User user2 = new User("Bot", "test123", 20, 100);
+        private Friendship friendship = new Friendship();
+
+        User user1 = null, user2 = null;
+        //User user2 = new User("Bot", "test123", 20, 100);
         private bool _login = false;
 
         public void startMainMenu()
@@ -60,13 +62,18 @@ namespace MonsterTradingCardGame
         {
             Console.WriteLine("----------------------------------------------------------");
             Console.WriteLine("Please select one of the following commands:");
-            Console.WriteLine("1: BATTLE");
-            Console.WriteLine("2: BUY PACKAGE");
-            Console.WriteLine("3: SHOW STACK");
-            Console.WriteLine("4: CHANGE DECK");
-            Console.WriteLine("5: MANAGE FRIENDSHIPS");
-            Console.WriteLine("6: LOGOUT");
-            Console.WriteLine("7: QUIT");
+            Console.WriteLine("1:  BATTLE");
+            Console.WriteLine("2:  BUY PACKAGE");
+            Console.WriteLine("3:  SHOW STACK");
+            Console.WriteLine("4:  CHANGE DECK");
+            Console.WriteLine("5:  ADD FRIEND");
+            Console.WriteLine("6:  OPEN FRIEND REQUESTS");
+            Console.WriteLine("7:  DELETE FRIENDSHIP");
+            Console.WriteLine("8:  PLAY AGAINST FRIEND");
+            Console.WriteLine("9:  SCOREBOARD");
+            Console.WriteLine("10: EDIT PROFILE PAGE");
+            Console.WriteLine("11: LOGOUT");
+            Console.WriteLine("12: QUIT");
             Console.WriteLine("----------------------------------------------------------");
             Console.Write("Your choice: ");
         }
@@ -166,12 +173,34 @@ namespace MonsterTradingCardGame
                             cardManagement.setDeck(user1);
                             break;
                         case 5:
-                            //friendship
+                            // add friend
+                            friendship.makeFriendRequest(user1);
                             break;
                         case 6:
-                            _login = false;
+                            // open friend requests
+                            friendship.acceptFriendRequest(user1);
                             break;
                         case 7:
+                            // delete friend
+                            break;
+                        case 8:
+                            user2 = friendship.playAgainstUser(user1);
+
+                            // deck of other player 
+                            cardManagement.loadDeckOfUser(user2);
+
+                            // start battle
+                            battleArena.fight(user1, user2);
+                            break;
+                        case 9:
+                            userManagement.printScoreboard();
+                            break;
+                        case 10:
+                            break;
+                        case 11:
+                            _login = false;
+                            break;
+                        case 12:
                             Console.WriteLine("The programm will be stopped! Thanks for playing!");
                             return false;
                         default:

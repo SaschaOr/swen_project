@@ -22,19 +22,23 @@ namespace MonsterTradingCardGame
             if (user1 != null && user2 != null)
             {
                 // check if players have enough cards in their stack
-                if (user1._stack.Count < DECK_SIZE || user2._stack.Count < DECK_SIZE)
+                if (user1._deck.Count < DECK_SIZE || user2._deck.Count < DECK_SIZE)
                 {
                     Console.WriteLine($"PLAYER {((user1._stack.Count < DECK_SIZE) ? 1 : 2)} has not enough cards in the stack to form a deck!");
                     return;
                 }
 
                 // create decks = 4 best cards of each user
-                List<Card> deckUser1 = getDeck(user1);
-                List<Card> deckUser2 = getDeck(user2);
+                //List<Card> deckUser1 = getDeck(user1);
+                //List<Card> deckUser2 = getDeck(user2);
+                // ADJUST!!!
 
-                printCards(deckUser1);
-                Console.WriteLine("---------------------------");
-                printCards(deckUser2);
+                List<Card> deckUser1 = user1._deck;
+                List<Card> deckUser2 = user2._deck;
+
+                //printCards(deckUser1);
+                //Console.WriteLine("---------------------------");
+                //printCards(deckUser2);
 
                 int roundCounter = 0;
 

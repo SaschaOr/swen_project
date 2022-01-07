@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -139,6 +140,25 @@ namespace MonsterTradingCardGame
             cmd.Parameters.AddWithValue("coins", user._coins);
             cmd.Parameters.AddWithValue("user_id", user._userID);
             cmd.ExecuteNonQuery();
+
+            conn = database.closeConnection();
+        }
+
+        public void printScoreboard()
+        {
+            Console.WriteLine("\nScoreboard:");
+            NpgsqlConnection conn = database.openConnection();
+
+            NpgsqlCommand cmd = new NpgsqlCommand("SELECT name, elo FROM \"user\" ORDER BY elo DESC;", conn);
+
+            NpgsqlDataReader dr = cmd.ExecuteReader();
+
+            int counter = 1;
+            while (dr.Read())
+            {
+                Console.WriteLine($"    {counter}. {dr[0]} - {dr[1]}");
+                counter++;
+            }
 
             conn = database.closeConnection();
         }
