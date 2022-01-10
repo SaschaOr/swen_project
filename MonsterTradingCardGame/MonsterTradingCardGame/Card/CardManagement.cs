@@ -42,7 +42,8 @@ namespace MonsterTradingCardGame
                     int randomElementType = random.Next(elementTypeCount);
                     // subtract 1, because spell can't be a monster type
                     int randomMonsterType = random.Next(monsterTypeCount - 1);
-                    int damage = random.Next(MAX_DAMAGE);
+                    // add 1, because the damage must be at least 1 or at most 100
+                    int damage = random.Next(MAX_DAMAGE) + 1;
 
                     string cardName;
 
@@ -112,7 +113,7 @@ namespace MonsterTradingCardGame
         {
             NpgsqlConnection conn = database.openConnection();
 
-            NpgsqlCommand cmd = new NpgsqlCommand("INSERT INTO \"card\" (card_name, card_type, element_type, special_type, damage, user_id, in_deck) VALUES (@card_name, @card_type, @element_type, @special_type, @damage, @user_id, @in_deck) RETURNING card_id;", conn);
+            NpgsqlCommand cmd = new NpgsqlCommand("INSERT INTO \"card\" (card_name, card_type, element_type, special_type, damage, user_id, in_deck, in_trade) VALUES (@card_name, @card_type, @element_type, @special_type, @damage, @user_id, @in_deck, @in_trade) RETURNING card_id;", conn);
             cmd.Parameters.AddWithValue("card_name", card._cardName.ToString());
             cmd.Parameters.AddWithValue("card_type", card._cardType.ToString());
             cmd.Parameters.AddWithValue("element_type", card._elementType.ToString());
@@ -120,6 +121,7 @@ namespace MonsterTradingCardGame
             cmd.Parameters.AddWithValue("damage", card._damage);
             cmd.Parameters.AddWithValue("user_id", userObject._userID);
             cmd.Parameters.AddWithValue("in_deck", false);
+            cmd.Parameters.AddWithValue("in_trade", false);
 
             // new card ID
             Object cardID = cmd.ExecuteScalar();
@@ -131,11 +133,15 @@ namespace MonsterTradingCardGame
 
         public void loadStackOfUser(User user)
         {
+            // clear stack
+            user._stack.Clear();
+
             NpgsqlConnection conn = database.openConnection();
 
-            NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM \"card\" WHERE user_id = @user_id AND in_deck = @in_deck;", conn);
+            NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM \"card\" WHERE user_id = @user_id AND in_deck = @in_deck AND in_trade = @in_trade;", conn);
             cmd.Parameters.AddWithValue("user_id", user._userID);
             cmd.Parameters.AddWithValue("in_deck", false);
+            cmd.Parameters.AddWithValue("in_trade", false);
             NpgsqlDataReader dr = cmd.ExecuteReader();
 
             while (dr.Read())
@@ -156,6 +162,9 @@ namespace MonsterTradingCardGame
 
         public void loadDeckOfUser(User user)
         {
+            // clear deck
+            user._deck.Clear();
+
             NpgsqlConnection conn = database.openConnection();
 
             NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM \"card\" WHERE user_id = @user_id AND in_deck = @in_deck;", conn);

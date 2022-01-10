@@ -9,11 +9,12 @@ namespace MonsterTradingCardGame
     public class Menu
     {
         private const int MENU_OPTIONS_BEFORE_LOGIN = 3;
-        private const int MENU_OPTIONS_AFTER_LOGIN = 13;
+        private const int MENU_OPTIONS_AFTER_LOGIN = 16;
 
         CardManagement cardManagement = new CardManagement();
         Battle battleArena = new Battle();
         UserManagement userManagement = new UserManagement();
+        private TradeManagement tradeManagement = new TradeManagement();
         private Friendship friendship = new Friendship();
 
         User user1 = null, user2 = null;
@@ -73,8 +74,11 @@ namespace MonsterTradingCardGame
             Console.WriteLine("9:  SCOREBOARD");
             Console.WriteLine("10: EDIT PROFILE PAGE");
             Console.WriteLine("11: SHOW PROFILE PAGE");
-            Console.WriteLine("12: LOGOUT");
-            Console.WriteLine("13: QUIT");
+            Console.WriteLine("12: CREATE TRADE");
+            Console.WriteLine("13: ACCEPT OPEN TRADE");
+            Console.WriteLine("14: TRADE HISTORY");
+            Console.WriteLine("15: LOGOUT");
+            Console.WriteLine("16: QUIT");
             Console.WriteLine("----------------------------------------------------------");
             Console.Write("Your choice: ");
         }
@@ -207,9 +211,20 @@ namespace MonsterTradingCardGame
                             userManagement.printProfilePage(user1);
                             break;
                         case 12:
-                            _login = false;
+                            // create trade
+                            tradeManagement.createTrade(user1);
                             break;
                         case 13:
+                            // show open trades
+                            tradeManagement.acceptTrade(user1);
+                            break;
+                        case 14:
+                            // trade history
+                            break;
+                        case 15:
+                            _login = false;
+                            break;
+                        case 16:
                             Console.WriteLine("The programm will be stopped! Thanks for playing!");
                             return false;
                         default:
