@@ -29,17 +29,8 @@ namespace MonsterTradingCardGame
                     return;
                 }
 
-                // create decks = 4 best cards of each user
-                //List<Card> deckUser1 = getDeck(user1);
-                //List<Card> deckUser2 = getDeck(user2);
-                // ADJUST!!!
-
                 List<Card> deckUser1 = user1._deck;
                 List<Card> deckUser2 = user2._deck;
-
-                //printCards(deckUser1);
-                //Console.WriteLine("---------------------------");
-                //printCards(deckUser2);
 
                 int roundCounter = 0;
 
@@ -107,10 +98,6 @@ namespace MonsterTradingCardGame
 
                         break;
                     }
-
-                    //printCards(deckUser1);
-                    //Console.WriteLine("---------------------------");
-                    //printCards(deckUser2);
 
                     Console.WriteLine("----------------------------------------------------------");
                     roundCounter++;
@@ -192,33 +179,28 @@ namespace MonsterTradingCardGame
 
         private bool checkSpecialType(Card playerCard, Card opponentCard)
         {
+            // special type in card name
             if (_dictionaries.specialTypeEffectiveness.ContainsKey(opponentCard._cardName))
             {
-                //Console.WriteLine("Gegner hat Special Type im Kartennamen enthalten!");
-                
                 if (_dictionaries.specialTypeEffectiveness[opponentCard._cardName].Equals(playerCard._cardName))
                 {
-                    //Console.WriteLine("Spieler hat Special Type im Kartennamen enthalten!");
                     return true;
                 }
                 if (_dictionaries.specialTypeEffectiveness[opponentCard._cardName].Equals(playerCard._specialType.ToString()))
                 {
-                    //Console.WriteLine("Spieler hat Special Type im Special Type enthalten!");
                     return true;
                 }
             }
 
+            // special type in type
             if (_dictionaries.specialTypeEffectiveness.ContainsKey(opponentCard._specialType.ToString()))
             {
-                //Console.WriteLine("Gegner hat Special Type im Special Type enthalten!");
                 if (_dictionaries.specialTypeEffectiveness[opponentCard._specialType.ToString()].Equals(playerCard._cardName))
                 {
-                    //Console.WriteLine("Spieler hat Special Type im Kartennamen enthalten!");
                     return true;
                 }
                 if (_dictionaries.specialTypeEffectiveness[opponentCard._specialType.ToString()].Equals(playerCard._specialType.ToString()))
                 {
-                    //Console.WriteLine("Spieler hat Special Type im Special Type enthalten!");
                     return true;
                 }
             }
@@ -230,13 +212,11 @@ namespace MonsterTradingCardGame
         {
             if (_dictionaries.specialTypeEffectiveness.ContainsKey(cardToTest._cardName))
             {
-                Console.WriteLine("Ich bin im Kartennamen enthalten!");
                 return true;
             }
 
             if (_dictionaries.specialTypeEffectiveness.ContainsKey(cardToTest._specialType.ToString()))
             {
-                Console.WriteLine("Ich bin im Special Type enthalten!");
                 return true;
             }
 

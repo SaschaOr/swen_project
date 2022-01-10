@@ -1,0 +1,55 @@
+Protokoll MonsterTradingCardGame – Sascha Ortner
+================================================
+
+Technical Steps
+---------------------
+Das Projekte habe ich Schritt für Schritt umgesetzt und so haben sich mehrere Phasen ergeben. Begonnen wurde mit der Implementierung der Basic BattleLogic.
+Hierfür wurden nur statisch generierte Karten übergeben und User gab es noch keine. Nachdem der User hinzukam, so kamen auch dynamisch generierte Karten hinzu.
+Dabei wurden mehrere Enum-Types verwendet, um hier eine effiziente und fehlerfreie Kontrolle zu garantieren. Jeder User hat hier zwei Listen mit Karten.
+Zum einen den Stack und zum anderen das Deck. Anfangs habe ich hier nur eine List gehabt, jedoch hat sich gezeigt, dass eine logische Trennung der Karten sinnvoll ist.
+Denn im Stack sind nun alle Karten eines Users, die er besitzt, aber nicht im Deck sind. Im Deck sind nur mehr die besten 4 Karten, die der User selbst aussuchen kann.
+Hier wurden anfangs noch die Karten automatisch zu Beginn des Battles hinzugefügt und lediglich der Damage war der ausschlaggebende Faktor zur Bestimmung der besten Karten.
+Da jedoch aber noch andere Faktoren, wie die speziellen Eigenschaften von Karten, eine große Rolle spiele, soll der User sich das Deck selbst zusammenstellen können.
+
+Ab hier wurde begonnen, alle Daten mit einer zentralen PostgreSQL Datenbank zu persistieren. Dafür benötigt es verschiedenste Tabellen und dazugehörige Klassen im Projekt.
+Um hier den Überblick zu behalten, habe ich dafür ein eigenes ER-Diagramm erstellt. In diesem sind die einzelnen Entitäten mit ihren Attributen gut erkennbar
+und nachvollziehbar aufgestellt. Für die Eröffnung der Verbindung zur Datenbank gibt es eine eigene Datenbank-Klasse, die bei Bedarf die Verbindung öffnet und wieder schließt.
+Jede Kommunikation mit der Datenbank erfolgt über Prepared-Statements, um die Gefahr einer SQL-Injection auszuschließen.
+
+Um auch den Aufwand an Überprüfungen zu minimieren und gleichzeitig auch die Wartbarkeit bzw. Erweiterbarkeit zu gewährleisten, werden die
+einzelnen Element-Typen, sowohl als auch die Spezialkämpfe, in Listen gespeichert. Diese Listen werden zentral in der Datenbank gespeichert und zu Beginn werden die
+Listen mit den Daten aus der Datenbank befüllt.
+
+Damit die einzelnen Klassen wie User und Card nicht zu überladen werden, wurde eine logische Trennung zwischen der Erstellung der Objekte und dem Management dahinter betrieben.
+So gibt es jeweils eine UserManagement und CardManagement Klasse. Gleiches gilt für Trading von Karten. Hier gibt es auch wieder Trading und das dazugehörige TradingManagement.
+
+Für eine zentrale Navigation durch das Programm hilft eine eigene Menu-Klasse. Damit wird auch ermöglicht, dass sich User ein- und ausloggen können.
+Dabei werden unterschiedliche Menüs basierend auf der aktuellen Kategorie angezeigt.
+
+Unit Tests
+-------------
+Die Unit Tests sind mittels dem Nunit Framework implementiert worden. Hier wurde der Fokus auf das Testen der Battles gerichtet.
+So wurde die Damage-Berechnung von allen Spezialkämpfen getätigt. Auch die Effektivität der Element-Typen wurde überprüft. Dabei wurde auf die richtige Berechnung
+des neuen Damages kontrolliert, sowohl als auch ob die richtige Karte gewinnt. Würde hier ein Fehler auftreten, so würde das gesamte Battle verfälscht werden und ein
+richtiges Ergebnis unmöglich werden. Aufgrund von User-Inputs und Datenbankverbindungen sind andere Funktionen kaum testbar gewesen und somit wurde hier nicht der Fokus gelegt.
+Jedoch wurden mit den geschriebenen Unit-Tests die wichtigste Funktion des Spiels fast vollständig getestet und jeder Fehler in der Damage-Kalkulation fällt sofort auf.
+
+Time Spent
+----------------
+06.12.2021 – 5.0 h
+07.12.2021 – 3.0 h
+08.12.2021 – 3.0 h
+09.12.2021 – 4.5 h
+01.01.2022 – 3.0 h
+02.01.2022 – 3.0 h
+03.01.2022 – 4.0 h
+04.01.2022 – 5.0 h
+05.01.2022 – 3.0 h
+06.01.2022 – 4.5 h
+07.01.2022 – 7.0 h
+08.01.2022 – 8.0 h
+09.01.2022 – 5.0 h
+10.01.2022 – 8.0 h
+Gesamt: 66 h
+
+

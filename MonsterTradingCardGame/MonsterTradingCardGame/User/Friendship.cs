@@ -7,7 +7,7 @@ using Npgsql;
 
 namespace MonsterTradingCardGame
 {
-    public class Friendship
+    public class Friendship : User
     {
         Database database = new Database();
 
