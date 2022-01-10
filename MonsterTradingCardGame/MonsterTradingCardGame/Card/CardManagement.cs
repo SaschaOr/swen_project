@@ -10,7 +10,7 @@ using Npgsql;
 
 namespace MonsterTradingCardGame
 {
-    public class CardManagement
+    public class CardManagement : Card
     {
         private const int PRICE_OF_PACKAGE = 5;
         private const int CARDS_PER_NEW_PACKAGE = 5;

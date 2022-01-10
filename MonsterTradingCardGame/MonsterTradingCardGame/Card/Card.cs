@@ -16,6 +16,10 @@ namespace MonsterTradingCardGame
 		public CardType _cardType { get; set; }
 		public MonsterType _specialType { get; set; }
 
+        public Card()
+        {
+
+        }
         public Card(string cardName, int damage, ElementType elementType, CardType cardType, MonsterType specialType)
 		{
             _cardName = cardName;

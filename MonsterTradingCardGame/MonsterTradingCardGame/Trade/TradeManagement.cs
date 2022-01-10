@@ -7,7 +7,7 @@ using Npgsql;
 
 namespace MonsterTradingCardGame
 {
-    public class TradeManagement
+    public class TradeManagement : Trade
     {
         private Database database = new Database();
 

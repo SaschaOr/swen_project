@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 
 namespace MonsterTradingCardGame
 {
-    public class UserManagement
+    public class UserManagement : User
     {
         private const int COINS_INITIAL = 20;
         private const int COINS_SPENT_INITIAL = 0;
@@ -49,8 +49,6 @@ namespace MonsterTradingCardGame
             cmd.Parameters.AddWithValue("name", name);
             Object passwordResponse = cmd.ExecuteScalar();
             
-            
-
             if (passwordResponse != null)
             {
                 bool passwordCheck = true;

@@ -24,6 +24,11 @@ namespace MonsterTradingCardGame
         public int _win { get; set; }
         public int _lose { get; set; }
 
+        public User()
+        {
+
+        }
+
         // enemy
         public User(int userID, string username)
         {

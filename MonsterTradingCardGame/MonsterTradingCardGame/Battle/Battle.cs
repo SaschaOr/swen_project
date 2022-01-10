@@ -141,7 +141,7 @@ namespace MonsterTradingCardGame
             return returnList;
         }
 
-        private int calculateDamage(Card playerCard, Card opponentCard)
+        public int calculateDamage(Card playerCard, Card opponentCard)
         {
             int damage = playerCard._damage;
 

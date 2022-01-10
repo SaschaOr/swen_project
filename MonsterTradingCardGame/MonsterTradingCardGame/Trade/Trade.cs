@@ -15,6 +15,11 @@ namespace MonsterTradingCardGame
         public ElementType? _elementType { get; set; }
         public int? _minDamage { get; set; }
 
+        public Trade()
+        {
+
+        }
+
         public Trade(int tradeID, int fromUserID, int cardID, CardType? cardType, ElementType? elementType, int? minDamage)
         {
             _tradeID = tradeID;
