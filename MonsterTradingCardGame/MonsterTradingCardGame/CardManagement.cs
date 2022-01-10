@@ -77,6 +77,7 @@ namespace MonsterTradingCardGame
 
                 _userManagement.updateCoins(userObject, PRICE_OF_PACKAGE);
                 _userManagement.updateCoins(userObject, -PRICE_OF_PACKAGE);
+                _userManagement.updateCoinsSpent(userObject, PRICE_OF_PACKAGE);
                 Console.WriteLine("Successfully bought a card package!");
             }
             else

@@ -19,7 +19,10 @@ namespace MonsterTradingCardGame
         public string _username { get; set; }
         public string _password { get; set; }
         public int _coins { get; set; }
+        public int _coinsSpent { get; set; }
         public int _elo { get; set; }
+        public int _win { get; set; }
+        public int _lose { get; set; }
 
         // enemy
         public User(int userID, string username)
@@ -28,22 +31,28 @@ namespace MonsterTradingCardGame
             _username = username;
         }
 
-        public User(int userID, string username, string password, int coins, int elo)
+        public User(int userID, string username, string password, int coins, int coinsSpent, int elo, int win, int lose)
         {
             _userID = userID;
             _username = username;
             _password = password;
             _coins = coins;
+            _coinsSpent = coinsSpent;
             _elo = elo;
+            _win = win;
+            _lose = lose;
         }
 
         // register new user
-        public User(string username, string password, int coins, int elo)
+        public User(string username, string password, int coins, int coinsSpent, int elo, int win, int lose)
         {
             _username = username;
             _password = password;
             _coins = coins;
+            _coinsSpent = coinsSpent;
             _elo = elo;
+            _win = win;
+            _lose = lose;
         }
 
         public void addCardToStack(Card card)

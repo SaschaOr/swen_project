@@ -14,6 +14,7 @@ namespace MonsterTradingCardGame
         private const int NO_DAMAGE = 0;
         private const int ELO_WIN = 3;
         private const int ELO_LOSS = -5;
+        private const int COINS_AFTER_WIN = 1;
         private UserManagement _userManagement = new UserManagement();
         private EffectivenessDictionaries _dictionaries = new EffectivenessDictionaries();
 
@@ -90,12 +91,18 @@ namespace MonsterTradingCardGame
                         {
                             _userManagement.updateElo(user1, ELO_LOSS);
                             _userManagement.updateElo(user2, ELO_WIN);
+                            _userManagement.userLosesBattle(user1);
+                            _userManagement.userWinsBattle(user2);
+                            _userManagement.updateCoins(user2, COINS_AFTER_WIN);
                         }
                         // Player 1 won
                         else
                         {
                             _userManagement.updateElo(user2, ELO_LOSS);
                             _userManagement.updateElo(user1, ELO_WIN);
+                            _userManagement.userLosesBattle(user2);
+                            _userManagement.userWinsBattle(user1);
+                            _userManagement.updateCoins(user1, COINS_AFTER_WIN);
                         }
 
                         break;
