@@ -11,6 +11,29 @@ namespace MonsterTradingCardGame
     {
         Database database = new Database();
 
+        public void printFriendList(User user)
+        {
+            List<int> friendList = getFriends(user);
+
+            if (friendList.Count == 0)
+            {
+                Console.WriteLine("\nYou have currently no friends!");
+                return;
+            }
+            else
+            {
+                Console.WriteLine("\nYour friend list:");
+                for (int i = 0; i < friendList.Count; i++)
+                {
+                    string username = getUsernameByUserID(friendList[i]);
+
+                    Console.WriteLine($"    {i + 1}. {username}");
+                }
+            }
+
+            Console.WriteLine();
+        }
+
         private List<string> searchUser(User searchingUser)
         {
             List<string> userList = new List<string>();
@@ -73,6 +96,8 @@ namespace MonsterTradingCardGame
             Object response = cmd.ExecuteNonQuery();
 
             conn = database.closeConnection();
+
+            Console.WriteLine("\nSuccessfully sent a friend request!");
         }
 
         public void acceptFriendRequest(User fromUser)
@@ -95,7 +120,7 @@ namespace MonsterTradingCardGame
                 }
             }
 
-            Console.Write("\nPlease enter the ID of the friend request you want to add (take 0 to cancel): ");
+            Console.Write("\nPlease enter the ID of the friend request you want to accept (take 0 to cancel): ");
             int id = getUserInput(userList.Count);
 
             if (id == 0)
@@ -103,12 +128,21 @@ namespace MonsterTradingCardGame
 
             NpgsqlConnection conn = database.openConnection();
 
+            // accept friendship
             NpgsqlCommand cmd = new NpgsqlCommand("UPDATE \"friendship\" SET friendship_accepted = @friendship_accepted WHERE user_id = @user_id AND friend_user_id = @friend_user_id;", conn);
             cmd.Parameters.AddWithValue("friendship_accepted", true);
             cmd.Parameters.AddWithValue("user_id", userList[id - 1]);
             cmd.Parameters.AddWithValue("friend_user_id", fromUser._userID);
 
             Object response = cmd.ExecuteNonQuery();
+
+            // add friendship in both directions
+            cmd = new NpgsqlCommand("INSERT INTO \"friendship\" (user_id, friend_user_id, friendship_accepted) VALUES (@user_id, @friend_user_id, @friendship_accepted);", conn);
+            cmd.Parameters.AddWithValue("user_id", fromUser._userID);
+            cmd.Parameters.AddWithValue("friend_user_id", userList[id - 1]);
+            cmd.Parameters.AddWithValue("friendship_accepted", true);
+
+            response = cmd.ExecuteNonQuery();
 
             conn = database.closeConnection();
 
@@ -135,9 +169,51 @@ namespace MonsterTradingCardGame
             return userList;
         }
 
-        public void deleteFriend(User fromUser, string friendToDelete)
+        public void deleteFriend(User user)
         {
+            List<int> friendList = getFriends(user);
 
+            Console.WriteLine("\nYour friend list:");
+
+            if (friendList.Count == 0)
+            {
+                Console.WriteLine("\nYou have currently no friends!");
+                return;
+            }
+            else
+            {
+                for (int i = 0; i < friendList.Count; i++)
+                {
+                    string username = getUsernameByUserID(friendList[i]);
+
+                    Console.WriteLine($"    {i + 1}. {username}");
+                }
+            }
+
+            Console.Write("\nWhich friendship do you want to delete? Select the index (press 0 to cancel): ");
+            int index = getUserInput(friendList.Count);
+
+            // subtract 1, because of list index
+            int userIDToDelete = friendList[index - 1];
+
+            NpgsqlConnection conn = database.openConnection();
+
+            // delete friendship in both directions
+            NpgsqlCommand cmd = new NpgsqlCommand("DELETE FROM \"friendship\" WHERE user_id = @user_id AND friend_user_id = @friend_user_id;", conn);
+            cmd.Parameters.AddWithValue("user_id", user._userID);
+            cmd.Parameters.AddWithValue("friend_user_id", userIDToDelete);
+
+            cmd.ExecuteNonQuery();
+
+            cmd = new NpgsqlCommand("DELETE FROM \"friendship\" WHERE user_id = @user_id AND friend_user_id = @friend_user_id;", conn);
+            cmd.Parameters.AddWithValue("user_id", userIDToDelete);
+            cmd.Parameters.AddWithValue("friend_user_id", user._userID);
+
+            cmd.ExecuteNonQuery();
+
+            conn = database.closeConnection();
+
+            Console.WriteLine("\nSuccessfully deleted friendship!");
         }
 
         private string getFriendToPlayAgainst(User user, int friend_id)

@@ -10,6 +10,8 @@ namespace MonsterTradingCardGame
     {
         Fire,
         Water,
-        Normal
+        Normal,
+        Ice,
+        Wind
     }
 }

@@ -98,7 +98,7 @@ namespace MonsterTradingCardGame
             if (response == null)
             {
                 // create new user
-                cmd = new NpgsqlCommand("INSERT INTO \"user\" (name, password, coins, elo) VALUES (@name, @password, @coins, @elo);", conn);
+                cmd = new NpgsqlCommand("INSERT INTO \"user\" (name, password, coins, elo, win, lose, coins_spent) VALUES (@name, @password, @coins, @elo, @win, @lose, @coins_spent);", conn);
 
                 // hashing users password with salt value
                 // https://stackoverflow.com/questions/4181198/how-to-hash-a-password
@@ -115,6 +115,9 @@ namespace MonsterTradingCardGame
                 cmd.Parameters.AddWithValue("password", passwordHash);
                 cmd.Parameters.AddWithValue("coins", newUser._coins);
                 cmd.Parameters.AddWithValue("elo", newUser._elo);
+                cmd.Parameters.AddWithValue("win", newUser._win);
+                cmd.Parameters.AddWithValue("lose", newUser._lose);
+                cmd.Parameters.AddWithValue("coins_spent", newUser._coinsSpent);
 
                 Object responseInsert = cmd.ExecuteScalar();
             }
@@ -178,6 +181,8 @@ namespace MonsterTradingCardGame
                 counter++;
             }
 
+            Console.WriteLine();
+
             conn = database.closeConnection();
         }
 
@@ -205,7 +210,7 @@ namespace MonsterTradingCardGame
 
         public void printProfilePage(User user)
         {
-            Console.WriteLine("\nYour profile:");
+            Console.WriteLine("\nProfile page:");
             Console.WriteLine($"    Username: {user._username}");
             Console.WriteLine($"    Coins: {user._coins}");
             Console.WriteLine($"    Coins spent: {user._coinsSpent}");
@@ -225,7 +230,82 @@ namespace MonsterTradingCardGame
             }
 
             Console.WriteLine($"    W/L-Ratio: {(user._win == 0 && user._lose == 0 ? "-" : winLoseRation.ToString("0.##") + "%")}");
-            
+        }
+
+        public void printProfilePageOtherUsers(User user)
+        {
+            List<User> userList = getAllUsers();
+
+            Console.WriteLine("\nUser list:");
+
+            if (userList.Count == 0)
+            {
+                Console.WriteLine("\nThere are no other users!");
+                return;
+            }
+
+            for (int i = 0; i < userList.Count; i++)
+            {
+                User tmp = userList[i];
+
+                if(tmp._userID != user._userID)
+                    Console.WriteLine($"    {i + 1}. {tmp._username}");
+            }
+
+            Console.Write("\nPlease select one of the user (press 0 to cancel): ");
+
+            int index = getUserInput(userList.Count);
+
+            if (index == 0)
+                return;
+
+            // subtract 1, because of list index
+            int userID = userList[index - 1]._userID;
+
+            User printUser = getUserInformationByUserID(userID);
+
+            printProfilePage(printUser);
+
+        }
+
+        private List<User> getAllUsers()
+        {
+            List<User> userList = new List<User>();
+
+            NpgsqlConnection conn = database.openConnection();
+
+            NpgsqlCommand cmd = new NpgsqlCommand("SELECT user_id, name FROM \"user\";", conn);
+            NpgsqlDataReader dr = cmd.ExecuteReader();
+
+            while (dr.Read())
+            {
+                User userToAdd = new User((int) dr[0], dr[1].ToString());
+                userList.Add(userToAdd);
+            }
+
+            conn = database.closeConnection();
+
+            return userList;
+        }
+
+        private User getUserInformationByUserID(int userID)
+        {
+            User userToReturn = null;
+
+            NpgsqlConnection conn = database.openConnection();
+
+            NpgsqlCommand cmd = new NpgsqlCommand("SELECT * FROM \"user\" WHERE user_id = @user_id;", conn);
+            cmd.Parameters.AddWithValue("user_id", userID);
+            NpgsqlDataReader dr = cmd.ExecuteReader();
+
+            while (dr.Read())
+            {
+                userToReturn = new User((int)dr[0], (string)dr[1], (string)dr[2], (int)dr[3], (int)dr[7], (int)dr[4], (int)dr[5], (int)dr[6]);
+            }
+
+            conn = database.closeConnection();
+
+            return userToReturn;
         }
 
         private Status changePassword(User user)
